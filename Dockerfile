@@ -27,7 +27,9 @@ RUN apk add --no-cache tini openssl
 COPY --from=builder /app/out ./out
 COPY --from=builder /app/docker/server.js ./server.js
 COPY --from=builder /app/docker/entrypoint.sh ./entrypoint.sh
-RUN chmod +x entrypoint.sh
+RUN chmod +x entrypoint.sh \
+    && mkdir -p /app/certs \
+    && chown node:node /app/certs
 EXPOSE 3000
 USER node
 ENTRYPOINT ["/sbin/tini", "--"]
