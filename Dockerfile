@@ -27,10 +27,9 @@ RUN apk add --no-cache tini openssl
 COPY --from=builder /app/out ./out
 COPY --from=builder /app/docker/server.js ./server.js
 COPY --from=builder /app/docker/entrypoint.sh ./entrypoint.sh
-RUN chmod +x entrypoint.sh \
-    && mkdir -p /app/certs \
-    && chown node:node /app/certs
+RUN chmod +x entrypoint.sh
 EXPOSE 3000
-USER node
+# Run as root to generate the TLS cert, then drop to the node user inside the
+# entrypoint. (tini remains PID 1 to reap zombies and forward signals.)
 ENTRYPOINT ["/sbin/tini", "--"]
 CMD ["/app/entrypoint.sh"]
