@@ -8,7 +8,7 @@ services:
     image: knx2home
     container_name: knx2home
     ports:
-      - "3000:3000"
+      - "3999:3000"
     environment:
       # Optional: override the listening port inside the container.
       - PORT=3000
