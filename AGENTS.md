@@ -95,6 +95,10 @@ Two paths:
 1. **Static export (CI / GitHub Pages)**: `output: "export"` in `next.config.ts`; CI uploads `./out`.
 2. **Docker**: multi-stage build that runs `npm ci` → `npm run build` → serves the static `out/` with a tiny Node static file server (`docker/server.js`). See `docker-compose.yml` for a one-command local deploy (`docker compose up --build`).
 
+### Insecure contexts / Web Crypto
+
+`crypto.subtle` (needed for ETS6 password-protected decryption) is only available in secure contexts (HTTPS or `localhost`). On a LAN IP over plain HTTP it is `undefined` and throws `s is undefined` on `importKey`. The Docker image generates a self-signed TLS cert at startup (`docker/entrypoint.sh`), so HTTPS is available out of the box; mount `./certs/server.crt` + `server.key` to use your own.
+
 ## Status
 
 - ETS6 password-protected files: supported (Web Crypto, verified byte-for-byte against a passwordless reference). Password is entered in the Options bar and threaded through the worker to `parseKnxproj`.

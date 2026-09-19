@@ -12,6 +12,12 @@ services:
     environment:
       # Optional: override the listening port inside the container.
       - PORT=3000
+      # Set CERT_DIR to a mounted dir with your real server.crt/server.key to
+      # replace the generated self-signed cert.
+      - CERT_DIR=/app/certs
+    volumes:
+      # Uncomment and point at your own certs to use them instead:
+      # - ./certs:/app/certs
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true

@@ -22,10 +22,13 @@ FROM node:24-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 # tini as PID 1 so signals and zombie reaping behave correctly in Docker.
-RUN apk add --no-cache tini
+# openssl is used by the entrypoint to generate a self-signed TLS cert.
+RUN apk add --no-cache tini openssl
 COPY --from=builder /app/out ./out
 COPY --from=builder /app/docker/server.js ./server.js
+COPY --from=builder /app/docker/entrypoint.sh ./entrypoint.sh
+RUN chmod +x entrypoint.sh
 EXPOSE 3000
 USER node
 ENTRYPOINT ["/sbin/tini", "--"]
-CMD ["node", "server.js"]
+CMD ["/app/entrypoint.sh"]

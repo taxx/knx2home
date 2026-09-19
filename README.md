@@ -99,6 +99,18 @@ docker build -t knx2home .
 docker run -p 3000:3000 knx2home
 ```
 
+#### HTTPS / self-signed certificate
+
+Web Crypto (`crypto.subtle` — used for password-protected project decryption) is only available in **secure contexts** (HTTPS or `localhost`). If you host on a LAN IP over plain HTTP, password-protected imports will fail. The Docker image automatically generates a self-signed TLS cert on first start, so you can reach the app over `https://<ip>:3000` (browsers will warn about the cert — that's expected; accept it once and Web Crypto works).
+
+To use your own certificate instead, mount it into the container:
+
+```bash
+# docker-compose.yml:
+#   volumes:
+#     - ./certs:/app/certs   # must contain server.crt + server.key
+```
+
 ### GitHub Pages
 
 The CI workflow builds a static export (`./out`) and publishes it to GitHub Pages.
