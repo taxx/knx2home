@@ -15,8 +15,8 @@ services:
       # Set CERT_DIR to a mounted dir with your real server.crt/server.key to
       # replace the generated self-signed cert.
       - CERT_DIR=/app/certs
-    volumes:
-      # Uncomment and point at your own certs to use them instead:
+    # Uncomment and point at your own certs to use them instead:
+    #volumes:
       # - ./certs:/app/certs
     restart: unless-stopped
     security_opt:
