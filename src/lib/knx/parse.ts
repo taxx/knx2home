@@ -1,5 +1,6 @@
 import { unzip } from "fflate";
 import { XMLParser } from "fast-xml-parser";
+import { extractNestedXml } from "./ets6";
 import type {
   GroupAddressCompat,
   GroupAddressMeta,
@@ -1459,6 +1460,7 @@ export async function parseKnxproj(
   file: File,
   opts?: {
     debug?: boolean;
+    password?: string;
     onProgress?: (p: ParseProgress) => void;
     preScanBytes?: number;
     yieldEveryFiles?: number;
@@ -1466,6 +1468,7 @@ export async function parseKnxproj(
   }
 ): Promise<KnxCatalog> {
   const onProgress = opts?.onProgress;
+  const password = opts?.password;
   const preScanBytes = Math.max(512, Math.min(1 << 20, opts?.preScanBytes ?? 8192));
   const yieldEveryFiles = Math.max(1, Math.min(128, opts?.yieldEveryFiles ?? 8));
   const yieldDelayMs = Math.max(0, Math.min(10, opts?.yieldDelayMs ?? 0));
@@ -1491,7 +1494,9 @@ export async function parseKnxproj(
         filter: (f) => {
           const name = f.name || "";
           if (/\.knxproj$/i.test(name)) knxprojEntries.push(name);
-          return /\.xml$/i.test(name);
+          // Extract XML files directly, plus any nested P-*.zip archives
+          // (ETS6 password-protected projects keep their XML inside those).
+          return /\.xml$/i.test(name) || (/\.zip$/i.test(name) && /^P-/i.test(name));
         },
       },
       (err, out) => {
@@ -1500,6 +1505,17 @@ export async function parseKnxproj(
       }
     );
   });
+
+  // ETS6 password-protected projects keep their XML inside encrypted P-*.zip
+  // archives. Decrypt those and merge the extracted XML files into `entries`.
+  for (const name of Object.keys(entries)) {
+    if (!name.toLowerCase().endsWith(".zip") || !/^P-/i.test(name)) continue;
+    const nested = await extractNestedXml(entries[name], password);
+    for (const [nestedName, data] of Object.entries(nested)) {
+      entries[nestedName] = data;
+    }
+    delete entries[name];
+  }
 
   const xmlNames = Object.keys(entries).filter((name) => name.toLowerCase().endsWith(".xml"));
   const totalFiles = xmlNames.length || 1;

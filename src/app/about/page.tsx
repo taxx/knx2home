@@ -1,5 +1,5 @@
 import { Footer } from "@/components/landing/Footer";
-import type { ComponentProps } from "react";
+import type { ComponentProps, JSX } from "react";
 import {
   AlertCircle,
   Database,
@@ -12,12 +12,13 @@ import {
   Sparkles,
   UploadCloud,
   Zap,
+  type LucideIcon,
 } from "lucide-react";
 
 type FeatureHighlight = {
   title: string;
   description: string;
-  icon: (props: ComponentProps<typeof FileSearch>) => JSX.Element;
+  icon: LucideIcon;
   accent: string;
   label: string;
 };

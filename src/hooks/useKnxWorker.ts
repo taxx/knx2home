@@ -91,7 +91,7 @@ export function useKnxWorker() {
   }, []);
 
   const parse = useCallback(
-    async (file: File): Promise<KnxCatalog> => {
+    async (file: File, password?: string): Promise<KnxCatalog> => {
       if (!workerRef.current) throw new Error("Parser worker is not ready.");
       if (pendingRef.current) throw new Error("Parser is already working.");
 
@@ -103,7 +103,7 @@ export function useKnxWorker() {
       return new Promise<KnxCatalog>((resolve, reject) => {
         pendingRef.current = { resolve, reject };
         try {
-          workerRef.current?.postMessage({ t: "parse", file });
+          workerRef.current?.postMessage({ t: "parse", file, password });
         } catch (err) {
           pendingRef.current = null;
           const message =

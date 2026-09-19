@@ -4,20 +4,25 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
-import { RefreshCw, Play, FileCode, Filter } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { RefreshCw, Play, FileCode, Filter, KeyRound } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function OptionsBar({
   file,
   busy,
+  password,
   dropReserveFromUnknown,
+  onPasswordChange,
   onToggleReserve,
   onParse,
   onReset,
 }: {
   file: File | null;
   busy: boolean;
+  password: string;
   dropReserveFromUnknown: boolean;
+  onPasswordChange: (v: string) => void;
   onToggleReserve: (v: boolean) => void;
   onParse: () => void;
   onReset: () => void;
@@ -62,6 +67,27 @@ export default function OptionsBar({
       </div>
 
       <div className="space-y-3">
+        <div className="space-y-2 rounded-lg border bg-background p-4">
+          <div className="flex items-center gap-2">
+            <KeyRound className="h-4 w-4 text-muted-foreground" />
+            <Label htmlFor="opt-password" className="text-sm font-medium">
+              Project password
+            </Label>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Leave empty for unprotected projects. Required for ETS6 password-protected files.
+          </p>
+          <Input
+            id="opt-password"
+            type="password"
+            value={password}
+            onChange={(e) => onPasswordChange(e.target.value)}
+            placeholder="Enter project password"
+            disabled={busy}
+            autoComplete="off"
+          />
+        </div>
+
         <Button
           onClick={onParse}
           disabled={!file || busy}

@@ -58,6 +58,7 @@ export default function KnxUpload() {
   const { parse, busy, progress, progressInfo, error } = useKnxWorker();
 
   const [file, setFile] = useState<File | null>(null);
+  const [password, setPassword] = useState("");
   const [catalog, setCatalog] = useState<KnxCatalog | null>(null);
   const [dropReserveFromUnknown, setDropReserveFromUnknown] = useState(true);
   const [dzKey, setDzKey] = useState(0);
@@ -284,7 +285,7 @@ export default function KnxUpload() {
   async function handleParse() {
     if (!file || busy) return;
     try {
-      const cat = await parse(file);
+      const cat = await parse(file, password);
       setCatalog(cat);
       setEntityOverrides({});
       setStep(2);
@@ -301,6 +302,7 @@ export default function KnxUpload() {
 
   function handleReset() {
     setFile(null);
+    setPassword("");
     setCatalog(null);
     setDzKey((k) => k + 1);
     setEntityOverrides({});
@@ -363,7 +365,9 @@ export default function KnxUpload() {
                   <OptionsBar
                     file={file}
                     busy={busy}
+                    password={password}
                     dropReserveFromUnknown={dropReserveFromUnknown}
+                    onPasswordChange={setPassword}
                     onToggleReserve={setDropReserveFromUnknown}
                     onParse={handleParse}
                     onReset={handleReset}

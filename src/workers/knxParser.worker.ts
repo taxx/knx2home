@@ -2,7 +2,7 @@ import { KnxCatalog } from "@/lib/types";
 import { parseKnxproj } from "@/lib/knx/parse";
 import { ParseProgress } from "@/lib/types/parse";
 
-type Req = { t: "parse"; file: File };
+type Req = { t: "parse"; file: File; password?: string };
 type Res =
   | { t: "progress"; p: ParseProgress }
   | { t: "result"; catalog: KnxCatalog }
@@ -14,6 +14,7 @@ self.onmessage = async (e: MessageEvent<Req>) => {
 
   try {
     const catalog = await parseKnxproj(msg.file, {
+      password: msg.password,
       onProgress: (p) =>
         (self as unknown as Worker).postMessage({ t: "progress", p } as Res),
     });
