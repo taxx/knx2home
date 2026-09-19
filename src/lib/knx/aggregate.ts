@@ -23,6 +23,9 @@ const NAME_STRIP_RE =
 
 /** ====================== LIGHT AGGREGATE ====================== */
 export function buildLaLightAggregates(gas: GroupAddress[]): LightAggregate[] {
+  // Same KNX lighting layout as buildAddressLightAggregates (see KNX-spec.md):
+  // 1/0/* on/off, 1/1/* dimming, 1/2/* brightness set, 1/3/* on/off state,
+  // 1/4/* brightness state.
   const byBase = new Map<string, LightAggregate>();
 
   for (const ga of gas) {
@@ -39,14 +42,14 @@ export function buildLaLightAggregates(gas: GroupAddress[]): LightAggregate[] {
 
     const dpt = normalizeDptToHyphen(ga.dpt);
     if (dpt === "1-1") {
-      if (parts.middle === 1) agg.on_off = ga.address;
-      if (parts.middle === 5) agg.on_off_state = ga.address;
+      if (parts.middle === 0) agg.on_off = ga.address;
+      if (parts.middle === 3) agg.on_off_state = ga.address;
       agg.consumedIds.add(ga.id);
     } else if (dpt === "3-7") {
-      if (parts.middle === 2) agg.dimming = ga.address;
+      if (parts.middle === 1) agg.dimming = ga.address;
       agg.consumedIds.add(ga.id);
     } else if (dpt === "5-1") {
-      if (parts.middle === 3) agg.brightness = ga.address;
+      if (parts.middle === 2) agg.brightness = ga.address;
       if (parts.middle === 4) agg.brightness_state = ga.address;
       agg.consumedIds.add(ga.id);
     }
@@ -59,11 +62,12 @@ export function buildLaLightAggregates(gas: GroupAddress[]): LightAggregate[] {
 
 /** ====================== ADDRESS-PATTERN LIGHT AGGREGATE (1/*) ====================== */
 export function buildAddressLightAggregates(gas: GroupAddress[]): LightAggregate[] {
-  // Map by sub index across middles for main group 1 (lighting)
-  // 1/1/*: on/off command (1.001)
-  // 1/5/*: on/off state (1.001)
-  // 1/2/*: dimming step (3.007)
-  // 1/3/*: brightness set (5.001)
+  // Map by sub index across middles for main group 1 (lighting).
+  // Layout follows the KNX spec (see KNX-spec.md):
+  // 1/0/*: on/off command (1.001)
+  // 1/1/*: relative dimming step (3.007)
+  // 1/2/*: brightness set (5.001)
+  // 1/3/*: on/off state (1.001)
   // 1/4/*: brightness state (5.001)
   type Key = number; // sub index
   const groups = new Map<Key, LightAggregate & { nameChosen?: boolean }>();
@@ -73,8 +77,8 @@ export function buildAddressLightAggregates(gas: GroupAddress[]): LightAggregate
     if (!parts) continue;
     if (parts.main !== 1) continue;
 
-    // Skip central groups 1/0, 1/6, 1/7 from aggregation
-    if (parts.middle === 0 || parts.middle === 6 || parts.middle === 7) continue;
+    // Skip central groups 1/6, 1/7 (and other non-dimmer middles) from aggregation
+    if (parts.middle === 6 || parts.middle === 7) continue;
 
     const dpt = normalizeDptToHyphen(ga.dpt);
     let g = groups.get(parts.sub);
@@ -85,28 +89,30 @@ export function buildAddressLightAggregates(gas: GroupAddress[]): LightAggregate
       groups.set(parts.sub, g);
     }
 
-    // Prefer naming from 1/1 (switch cmd) or 1/3 (brightness cmd)
-    if (!g.nameChosen && (parts.middle === 1 || parts.middle === 3) && ga.name) {
+    // Prefer naming from the on/off command (middle 0), which is the address that
+    // carries the real channel name in ETS projects (the dim/bright/state GAs are
+    // usually blank-named).
+    if (!g.nameChosen && parts.middle === 0 && ga.name) {
       g.name = ga.name;
       g.nameChosen = true;
     }
 
-    if (parts.middle === 1 && dpt === "1-1") {
+    if (parts.middle === 0 && dpt === "1-1") {
       g.on_off = ga.address;
       g.consumedIds.add(ga.id);
       continue;
     }
-    if (parts.middle === 5 && dpt === "1-1") {
+    if (parts.middle === 3 && dpt === "1-1") {
       g.on_off_state = ga.address;
       g.consumedIds.add(ga.id);
       continue;
     }
-    if (parts.middle === 2 && dpt === "3-7") {
+    if (parts.middle === 1 && dpt === "3-7") {
       g.dimming = ga.address;
       g.consumedIds.add(ga.id);
       continue;
     }
-    if (parts.middle === 3 && (dpt === "5-1" || dpt === "5")) {
+    if (parts.middle === 2 && (dpt === "5-1" || dpt === "5")) {
       g.brightness = ga.address;
       g.consumedIds.add(ga.id);
       continue;
@@ -311,13 +317,19 @@ export interface SwitchAggregate {
 
 export function buildSwitchAggregates(
   gas: GroupAddress[],
-  linksByGa?: Map<string, KnxLinkInfo>
+  linksByGa?: Map<string, KnxLinkInfo>,
+  opts: { skipIds?: Set<string>; skipAddresses?: Set<string> } = {}
 ): SwitchAggregate[] {
   const byBase = new Map<string, SwitchAggregate>();
 
   for (const ga of gas) {
     // Do not treat central 0/1/* group addresses as switches; these are scenes
   if (ga.address?.startsWith("0/1/")) continue;
+
+    // Skip addresses that were consumed by a light/dimmer channel aggregate so
+    // dimmable lights do not also get emitted as standalone switches.
+    if (opts.skipIds?.has(ga.id)) continue;
+    if (opts.skipAddresses?.has(ga.address)) continue;
 
     const dpt = normalizeDptToHyphen(ga.dpt);
     if (dpt !== "1-1") continue;

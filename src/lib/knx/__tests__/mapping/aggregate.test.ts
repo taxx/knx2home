@@ -16,25 +16,25 @@ describe("aggregate helpers", () => {
       {
         id: "ga-1",
         name: "LA1 Woonkamer",
-        address: "1/1/1",
+        address: "1/0/1",
         dpt: "1.001",
       },
       {
         id: "ga-2",
         name: "LA1 Woonkamer",
-        address: "1/5/1",
+        address: "1/3/1",
         dpt: "1.001",
       },
       {
         id: "ga-3",
         name: "LA1 Woonkamer",
-        address: "1/2/1",
+        address: "1/1/1",
         dpt: "3.007",
       },
       {
         id: "ga-4",
         name: "LA1 Woonkamer",
-        address: "1/3/1",
+        address: "1/2/1",
         dpt: "5.001",
       },
       {
@@ -50,10 +50,10 @@ describe("aggregate helpers", () => {
     expect(aggregates).toHaveLength(1);
     const agg = aggregates[0];
     expect(agg.name).toBe("LA1 Woonkamer");
-    expect(agg.on_off).toBe("1/1/1");
-    expect(agg.on_off_state).toBe("1/5/1");
-    expect(agg.dimming).toBe("1/2/1");
-    expect(agg.brightness).toBe("1/3/1");
+    expect(agg.on_off).toBe("1/0/1");
+    expect(agg.on_off_state).toBe("1/3/1");
+    expect(agg.dimming).toBe("1/1/1");
+    expect(agg.brightness).toBe("1/2/1");
     expect(agg.brightness_state).toBe("1/4/1");
     expect(Array.from(agg.consumedIds)).toEqual([
       "ga-1",

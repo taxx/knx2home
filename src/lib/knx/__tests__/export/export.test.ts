@@ -16,20 +16,26 @@ describe("export helpers", () => {
       {
         id: "ga-1",
         name: "LA1 Woonkamer",
-        address: "1/1/1",
+        address: "1/0/1",
         dpt: "1.001",
         description: "Light",
       },
       {
         id: "ga-2",
         name: "LA1 Woonkamer",
-        address: "1/5/1",
+        address: "1/3/1",
         dpt: "1.001",
       },
       {
         id: "ga-3",
         name: "LA1 Woonkamer",
-        address: "1/3/1",
+        address: "1/2/1",
+        dpt: "5.001",
+      },
+      {
+        id: "ga-3b",
+        name: "LA1 Woonkamer",
+        address: "1/4/1",
         dpt: "5.001",
       },
       {
@@ -68,12 +74,9 @@ describe("export helpers", () => {
 
   it("builds Home Assistant entities with reserve filtering", () => {
     const allEntities = buildHaEntities(catalog);
-    expect(allEntities.switches).toHaveLength(2);
+    expect(allEntities.switches).toHaveLength(1);
     const switchNames = allEntities.switches.map((entry) => entry.name);
-    expect(switchNames).toEqual([
-      "LA1 Woonkamer",
-      "General Switch",
-    ]);
+    expect(switchNames).toEqual(["General Switch"]);
     expect(allEntities.lights).toHaveLength(1);
     expect(allEntities.sensors).toHaveLength(1);
     expect(allEntities.times).toHaveLength(1);
@@ -91,12 +94,14 @@ describe("export helpers", () => {
     const switchAddresses = parsed.knx.switch.map(
       (entry: { address: string }) => entry.address
     );
-    expect(switchAddresses).toEqual(["1/1/1", "2/0/1"]);
+    expect(switchAddresses).toEqual(["2/0/1"]);
     const switchStates = parsed.knx.switch.map(
       (entry: { state_address?: string }) => entry.state_address
     );
-    expect(switchStates).toEqual([undefined, "2/0/2"]);
-    expect(parsed.knx.light[0].address).toBe("1/1/1");
+    expect(switchStates).toEqual(["2/0/2"]);
+    expect(parsed.knx.light[0].address).toBe("1/0/1");
+    expect(parsed.knx.light[0].brightness_address).toBe("1/2/1");
+    expect(parsed.knx.light[0].brightness_state_address).toBe("1/4/1");
     expect(parsed.knx.sensor[0].state_address).toBe("3/0/1");
     expect(parsed.knx.time[0].state_address).toBe("5/0/1");
     expect(parsed.knx._unknown[0].name).toBe("Reserve");
@@ -106,12 +111,12 @@ describe("export helpers", () => {
     const entities = buildHaEntities(catalog);
     const summary = summarizeEntities(entities);
 
-    expect(summary.counts.switch).toBe(2);
+    expect(summary.counts.switch).toBe(1);
     expect(summary.counts.light).toBe(1);
     expect(summary.counts.sensor).toBe(1);
     expect(summary.counts.time).toBe(1);
     expect(summary.counts._unknown).toBe(1);
-    expect(summary.counts.total).toBe(6);
+    expect(summary.counts.total).toBe(5);
     expect(summary.sensorsByType.temperature).toBe(1);
   });
 
@@ -121,7 +126,7 @@ describe("export helpers", () => {
     });
     const parsed = YAML.parse(yamlString);
     const addresses = parsed.knx.switch.map((entry: { address: string }) => entry.address);
-    expect(addresses).toEqual(["1/1/1", "2/0/1"]);
+    expect(addresses).toEqual(["2/0/1"]);
     expect(parsed.knx._unknown).toBeUndefined();
   });
 
@@ -130,6 +135,6 @@ describe("export helpers", () => {
     const restored = YAML.parse(catalogYaml);
     expect(restored.project_name).toBe("Export Fixture");
     expect(restored.group_addresses[0].description).toBe("Light");
-    expect(restored.group_addresses).toHaveLength(8);
+    expect(restored.group_addresses).toHaveLength(9);
   });
 });

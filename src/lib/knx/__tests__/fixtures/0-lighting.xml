@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<KNX xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" CreatedBy="ETS6" ToolVersion="6.4.8718.0" xmlns="http://knx.org/xml/project/23">
+  <Project Id="P-ANON">
+    <Installations>
+      <Installation Name="">
+        <GroupAddresses>
+          <GroupRanges>
+            <GroupRange Id="P-ANON-0_GR-3" RangeStart="1" RangeEnd="2047" Name="Relays">
+              <GroupRange Id="P-ANON-0_GR-4" RangeStart="1" RangeEnd="255" Name="on/off">
+                <GroupAddress Id="P-ANON-0_GA-2" Address="1" Name="Relay 1" Description="R1-1" DatapointType="DPST-1-6" />
+                <GroupAddress Id="P-ANON-0_GA-3" Address="2" Name="Relay 2" Description="R1-2" DatapointType="DPST-1-6" />
+              </GroupRange>
+            </GroupRange>
+            <GroupRange Id="P-ANON-0_GR-6" RangeStart="2048" RangeEnd="4095" Name="Dimmer">
+              <GroupRange Id="P-ANON-0_GR-7" RangeStart="2048" RangeEnd="2303" Name="on/off W">
+                <GroupAddress Id="P-ANON-0_GA-52" Address="2048" Name="Takbelysning arbetsrum" Description="D4-C1" DatapointType="DPST-1-1" />
+                <GroupAddress Id="P-ANON-0_GA-53" Address="2049" Name="Takbelysning gästrum" Description="D4-C2" DatapointType="DPST-1-1" />
+                <GroupAddress Id="P-ANON-0_GA-54" Address="2050" Name="Trappbelysning" Description="D4-C3" DatapointType="DPST-1-1" />
+                <GroupAddress Id="P-ANON-0_GA-55" Address="2051" Name="Matplats" Description="D4-C4" DatapointType="DPST-1-1" />
+              </GroupRange>
+              <GroupRange Id="P-ANON-0_GR-8" RangeStart="2304" RangeEnd="2559" Name="4bit">
+                <GroupAddress Id="P-ANON-0_GA-336" Address="2304" Name=" " Description="C1" DatapointType="DPST-3-7" />
+                <GroupAddress Id="P-ANON-0_GA-337" Address="2305" Name=" " Description="C2" DatapointType="DPST-3-7" />
+                <GroupAddress Id="P-ANON-0_GA-338" Address="2306" Name=" " Description="C3" DatapointType="DPST-3-7" />
+                <GroupAddress Id="P-ANON-0_GA-339" Address="2307" Name=" " Description="C4" DatapointType="DPST-3-7" />
+              </GroupRange>
+              <GroupRange Id="P-ANON-0_GR-9" RangeStart="2560" RangeEnd="2815" Name="1Byte W">
+                <GroupAddress Id="P-ANON-0_GA-376" Address="2560" Name=" " Description="C1" DatapointType="DPST-5-1" />
+                <GroupAddress Id="P-ANON-0_GA-377" Address="2561" Name=" " Description="C2" DatapointType="DPST-5-1" />
+                <GroupAddress Id="P-ANON-0_GA-378" Address="2562" Name=" " Description="C3" DatapointType="DPST-5-1" />
+                <GroupAddress Id="P-ANON-0_GA-379" Address="2563" Name=" " Description="C4" DatapointType="DPST-5-1" />
+              </GroupRange>
+              <GroupRange Id="P-ANON-0_GR-10" RangeStart="2816" RangeEnd="3071" Name="1bit R">
+                <GroupAddress Id="P-ANON-0_GA-416" Address="2816" Name=" " Description="C1" DatapointType="DPST-1-1" />
+                <GroupAddress Id="P-ANON-0_GA-417" Address="2817" Name=" " Description="C2" DatapointType="DPST-1-1" />
+                <GroupAddress Id="P-ANON-0_GA-418" Address="2818" Name=" " Description="C3" DatapointType="DPST-1-1" />
+                <GroupAddress Id="P-ANON-0_GA-419" Address="2819" Name=" " Description="C4" DatapointType="DPST-1-1" />
+              </GroupRange>
+              <GroupRange Id="P-ANON-0_GR-11" RangeStart="3072" RangeEnd="3327" Name="1Byte R">
+                <GroupAddress Id="P-ANON-0_GA-456" Address="3072" Name=" " Description="C1" DatapointType="DPST-5-1" />
+                <GroupAddress Id="P-ANON-0_GA-457" Address="3073" Name=" " Description="C2" DatapointType="DPST-5-1" />
+                <GroupAddress Id="P-ANON-0_GA-458" Address="3074" Name=" " Description="C3" DatapointType="DPST-5-1" />
+                <GroupAddress Id="P-ANON-0_GA-459" Address="3075" Name=" " Description="C4" DatapointType="DPST-5-1" />
+              </GroupRange>
+            </GroupRange>
+          </GroupRanges>
+        </GroupAddresses>
+      </Installation>
+    </Installations>
+  </Project>
+</KNX>

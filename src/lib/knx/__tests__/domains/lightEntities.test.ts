@@ -11,25 +11,25 @@ describe("light entities", () => {
       {
         id: "ga-1",
         name: "LA1 Woonkamer",
-        address: "1/1/1",
+        address: "1/0/1",
         dpt: "1.001",
       },
       {
         id: "ga-2",
         name: "LA1 Woonkamer",
-        address: "1/5/1",
+        address: "1/3/1",
         dpt: "1.001",
       },
       {
         id: "ga-3",
         name: "LA1 Woonkamer",
-        address: "1/2/1",
+        address: "1/1/1",
         dpt: "3.007",
       },
       {
         id: "ga-4",
         name: "LA1 Woonkamer",
-        address: "1/3/1",
+        address: "1/2/1",
         dpt: "5.001",
       },
       {
@@ -46,9 +46,9 @@ describe("light entities", () => {
     expect(entities.lights).toHaveLength(1);
     const light = entities.lights[0];
     expect(light.name).toBe("LA1 Woonkamer");
-    expect(light.address).toBe("1/1/1");
-    expect(light.state_address).toBe("1/5/1");
-    expect(light.brightness_address).toBe("1/3/1");
+    expect(light.address).toBe("1/0/1");
+    expect(light.state_address).toBe("1/3/1");
+    expect(light.brightness_address).toBe("1/2/1");
     expect(light.brightness_state_address).toBe("1/4/1");
 
     const yaml = haEntitiesToYaml(entities);
@@ -66,9 +66,9 @@ describe("light entities", () => {
     };
 
     expect(readString("name")).toBe("LA1 Woonkamer");
-    expect(readString("address")).toBe("1/1/1");
-    expect(readString("state_address")).toBe("1/5/1");
-    expect(readString("brightness_address")).toBe("1/3/1");
+    expect(readString("address")).toBe("1/0/1");
+    expect(readString("state_address")).toBe("1/3/1");
+    expect(readString("brightness_address")).toBe("1/2/1");
     expect(readString("brightness_state_address")).toBe("1/4/1");
   });
 });

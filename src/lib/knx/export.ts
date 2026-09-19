@@ -168,7 +168,26 @@ export function buildHaEntities(
 
   const laAggs = dedupedLightAggs;  // For consumed tracking
 
-  const switchAggs = buildSwitchAggregates((catalog as LegacyCatalog).group_addresses ?? [], linksByGa);
+  // Collect every address consumed by a light/dimmer aggregate so those channels
+  // are not also emitted as standalone switches (e.g. the on/off 1/0/x address of
+  // a dimmable light).
+  const lightAddresses = new Set<string>();
+  for (const a of laAggs) {
+    if (a.on_off) lightAddresses.add(a.on_off);
+    if (a.on_off_state) lightAddresses.add(a.on_off_state);
+    if (a.dimming) lightAddresses.add(a.dimming);
+    if (a.brightness) lightAddresses.add(a.brightness);
+    if (a.brightness_state) lightAddresses.add(a.brightness_state);
+  }
+
+  const switchAggs = buildSwitchAggregates(
+    (catalog as LegacyCatalog).group_addresses ?? [],
+    linksByGa,
+    {
+      skipIds: collectConsumedIds(laAggs),
+      skipAddresses: lightAddresses,
+    }
+  );
   for (const s of switchAggs) {
     const entry: HaSwitch = { name: s.name, address: s.address! };
     if (s.state_address) entry.state_address = s.state_address;
