@@ -6,6 +6,8 @@ This project is a **Next.js application** that converts KNX configuration files 
 
 - 🔍 **KNX Group Address Parsing**<br>
   Converts KNX addresses and DPTs into Home Assistant entities.
+- 🔒 **Password-Protected Projects**<br>
+  Opens ETS6 password-protected `.knxproj` files via Web Crypto (PBKDF2 + AES-256-CTR).
 - ⚡ **Smart Heuristics**<br>
   Automatically guesses the correct entity type (light, switch, cover, sensor, …).
 - 📝 **YAML Generator**<br>
@@ -54,7 +56,7 @@ For local development, follow these steps:
 
 At least the following software should be installed:
 
-- Node.js 20+
+- Node.js 24 (LTS)+
 - npm
 
 ### 2. Install dependencies
@@ -77,6 +79,31 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 npm run build
 npm start
 ```
+
+## Deployment
+
+### Docker
+
+The included `Dockerfile` builds the app and serves the static export with a tiny Node HTTP server. Run it locally with:
+
+```bash
+docker compose up --build
+```
+
+Then open [http://localhost:3000](http://localhost:3000).
+
+To build and run the image manually:
+
+```bash
+docker build -t knx2home .
+docker run -p 3000:3000 knx2home
+```
+
+### GitHub Pages
+
+The CI workflow builds a static export (`./out`) and publishes it to GitHub Pages.
+
+## Resources
 
 ## Resources
 

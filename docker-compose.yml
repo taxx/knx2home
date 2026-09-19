@@ -1,0 +1,17 @@
+# Local Docker deployment for knx2home.
+# Usage: docker compose up --build   (serves on http://localhost:3000)
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: knx2home
+    container_name: knx2home
+    ports:
+      - "3000:3000"
+    environment:
+      # Optional: override the listening port inside the container.
+      - PORT=3000
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
